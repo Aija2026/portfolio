@@ -1,0 +1,291 @@
+
+    <!DOCTYPE html>
+    <html lang="lv">
+    <head>
+        <meta charset="UTF-8">
+        <title>NVD Analītikas Dashboard</title>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <style>
+            :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; --success: #16a34a; }
+            body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--text); font-size: 13px; }
+            .header { background: white; padding: 10px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+            .container { padding: 15px; max-width: 1200px; margin: auto; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+            .card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+            .val { font-size: 22px; font-weight: 800; color: var(--primary); }
+            .label { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+            .filters { display: flex; gap: 10px; margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; align-items: center; }
+            input, select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; transition: border 0.2s; }
+            input:focus { border-color: var(--primary); }
+            .btn-excel { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+            .btn-excel:hover { background: #15803d; }
+            .scroll-area { background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; max-height: 400px; overflow-y: auto; }
+            table { width: 100%; border-collapse: collapse; }
+            th { background: #f1f5f9; padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; color: #475569; position: sticky; top: 0; z-index: 10; }
+            td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+            tr:nth-child(even) { background: #fafafa; }
+            tr:hover { background: #eff6ff; }
+            #main-chart { background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; padding: 10px; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h2 style="margin:0; font-size:18px;">📊 NVD F17 Analītika</h2>
+            <div id="last-update" style="font-size:11px; color:#94a3b8;">Dati no: f17_dati_pilni.csv</div>
+        </div>
+
+        <div class="container">
+            <div class="grid">
+                <div class="card"><div class="label">Kopējā summa</div><div id="disp-sum" class="val">0.00 €</div></div>
+                <div class="card"><div class="label">Pacientu skaits</div><div id="disp-pac" class="val">0</div></div>
+                <div class="card"><div class="label">Atlasītie ieraksti</div><div id="disp-cnt" class="val">0</div></div>
+            </div>
+
+            <div class="filters">
+                <select id="filt-year">
+                    <option value="all">Visi gadi</option>
+                    <option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option>
+                </select>
+                <input type="text" id="filt-search" placeholder="Meklēt diagnozi vai zāles..." style="flex:1;">
+                <button class="btn-excel" onclick="exportToExcel()">📥 Eksportēt (Excel)</button>
+            </div>
+
+            <div id="main-chart"></div>
+
+            <div class="scroll-area">
+                <table id="data-table">
+                    <thead><tr><th>Gads</th><th>Kods</th><th>Nosaukums</th><th>ST</th><th style="text-align:right;">Summa</th><th style="text-align:right;">Pacienti</th></tr></thead>
+                    <tbody id="main-table"><tr data-year='2024' data-sum='134.96' data-pac='4'>
+            <td><strong>2024</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Fluvoxaminum</small></td>
+            <td style="text-align:right; font-weight:bold;">134.96 €</td>
+            <td style="text-align:right;">4</td>
+        </tr><tr data-year='2024' data-sum='33.46' data-pac='3'>
+            <td><strong>2024</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">33.46 €</td>
+            <td style="text-align:right;">3</td>
+        </tr><tr data-year='2024' data-sum='25.6' data-pac='2'>
+            <td><strong>2024</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">25.60 €</td>
+            <td style="text-align:right;">2</td>
+        </tr><tr data-year='2024' data-sum='22.59' data-pac='2'>
+            <td><strong>2024</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Carbamazepinum</small></td>
+            <td style="text-align:right; font-weight:bold;">22.59 €</td>
+            <td style="text-align:right;">2</td>
+        </tr><tr data-year='2024' data-sum='3.58' data-pac='1'>
+            <td><strong>2024</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Piracetamum</small></td>
+            <td style="text-align:right; font-weight:bold;">3.58 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2023' data-sum='38.56' data-pac='1'>
+            <td><strong>2023</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Fluvoxaminum</small></td>
+            <td style="text-align:right; font-weight:bold;">38.56 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2023' data-sum='3.53' data-pac='1'>
+            <td><strong>2023</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Carbamazepinum</small></td>
+            <td style="text-align:right; font-weight:bold;">3.53 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2022' data-sum='38.56' data-pac='1'>
+            <td><strong>2022</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Fluvoxaminum</small></td>
+            <td style="text-align:right; font-weight:bold;">38.56 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2022' data-sum='7.06' data-pac='2'>
+            <td><strong>2022</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Carbamazepinum</small></td>
+            <td style="text-align:right; font-weight:bold;">7.06 €</td>
+            <td style="text-align:right;">2</td>
+        </tr><tr data-year='2022' data-sum='5.12' data-pac='1'>
+            <td><strong>2022</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">5.12 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2022' data-sum='5.08' data-pac='1'>
+            <td><strong>2022</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Chlorprothixenum</small></td>
+            <td style="text-align:right; font-weight:bold;">5.08 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2022' data-sum='3.58' data-pac='1'>
+            <td><strong>2022</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Piracetamum</small></td>
+            <td style="text-align:right; font-weight:bold;">3.58 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2021' data-sum='57.84' data-pac='2'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Fluvoxaminum</small></td>
+            <td style="text-align:right; font-weight:bold;">57.84 €</td>
+            <td style="text-align:right;">2</td>
+        </tr><tr data-year='2021' data-sum='52.58' data-pac='3'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">52.58 €</td>
+            <td style="text-align:right;">3</td>
+        </tr><tr data-year='2021' data-sum='22.28' data-pac='1'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Fluvoxaminum</small></td>
+            <td style="text-align:right; font-weight:bold;">22.28 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2021' data-sum='15.36' data-pac='2'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">15.36 €</td>
+            <td style="text-align:right;">2</td>
+        </tr><tr data-year='2021' data-sum='8.86' data-pac='1'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Acidum valproicum/Natrii valproatum</small></td>
+            <td style="text-align:right; font-weight:bold;">8.86 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2021' data-sum='5.34' data-pac='1'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Flupentixolum</small></td>
+            <td style="text-align:right; font-weight:bold;">5.34 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2021' data-sum='5.06' data-pac='1'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Piracetamum</small></td>
+            <td style="text-align:right; font-weight:bold;">5.06 €</td>
+            <td style="text-align:right;">1</td>
+        </tr><tr data-year='2021' data-sum='4.78' data-pac='1'>
+            <td><strong>2021</strong></td>
+            <td style="color:#666;">F17.1</td>
+            <td>Vielu kaitējoši pārmērīga lietošana</td>
+            <td><small>Sertralinum</small></td>
+            <td style="text-align:right; font-weight:bold;">4.78 €</td>
+            <td style="text-align:right;">1</td>
+        </tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            const yearSelect = document.getElementById('filt-year');
+            const searchInput = document.getElementById('filt-search');
+            const tableRows = Array.from(document.querySelectorAll('#main-table tr'));
+
+            function refresh() {
+                const selectedYear = yearSelect.value;
+                const searchTerm = searchInput.value.toUpperCase();
+                
+                let totalSum = 0;
+                let totalPac = 0;
+                let visibleCount = 0;
+                const chartMap = {};
+
+                tableRows.forEach(row => {
+                    const rYear = row.getAttribute('data-year');
+                    const rSum = parseFloat(row.getAttribute('data-sum'));
+                    const rPac = parseInt(row.getAttribute('data-pac'));
+                    const rText = row.innerText.toUpperCase();
+
+                    const matchesYear = (selectedYear === 'all' || rYear === selectedYear);
+                    const matchesSearch = rText.includes(searchTerm);
+
+                    if (matchesYear && matchesSearch) {
+                        row.style.display = "";
+                        totalSum += rSum;
+                        totalPac += rPac;
+                        visibleCount++;
+                        chartMap[rYear] = (chartMap[rYear] || 0) + rSum;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                document.getElementById('disp-sum').innerText = totalSum.toLocaleString('lv-LV', {minimumFractionDigits: 2}) + " €";
+                document.getElementById('disp-pac').innerText = totalPac.toLocaleString('lv-LV');
+                document.getElementById('disp-cnt').innerText = visibleCount;
+
+                const sortedYears = Object.keys(chartMap).sort();
+                const sortedSums = sortedYears.map(y => chartMap[y]);
+
+                Plotly.react('main-chart', [{
+                    x: sortedYears,
+                    y: sortedSums,
+                    type: 'bar',
+                    marker: {color: '#3b82f6'},
+                    hovertemplate: '%{y:,.2f} €<extra></extra>'
+                }], {
+                    margin: {t:20, b:40, l:60, r:20},
+                    height: 250,
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    xaxis: {type: 'category', gridcolor: '#f1f5f9'},
+                    yaxis: {gridcolor: '#f1f5f9'}
+                }, {responsive: true, displayModeBar: false});
+            }
+
+            function exportToExcel() {
+                let csv = [];
+                const rows = document.querySelectorAll("table tr");
+                
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i].style.display !== "none") {
+                        let row = [], cols = rows[i].querySelectorAll("td, th");
+                        for (let j = 0; j < cols.length; j++) 
+                            row.push('"' + cols[j].innerText.replace(' €', '').replace('.', ',') + '"');
+                        csv.push(row.join(";"));
+                    }
+                }
+
+                const csvContent = "\uFEFF" + csv.join("\n");
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "nvd_f17_filtrēts.csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            yearSelect.onchange = refresh;
+            searchInput.oninput = refresh;
+            refresh();
+        </script>
+    </body>
+    </html>
+    
