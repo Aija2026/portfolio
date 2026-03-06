@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --glass: rgba(255, 255, 255, 0.25);
-    --glass-border: rgba(255, 255, 255, 0.4);
+    --glass: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.3);
     --accent-purple: #7c5cbf;
   }
 
@@ -17,13 +17,15 @@
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
     display: flex;
-    flex-direction: column; /* Mainīts uz column, lai footer būtu apakšā */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+    padding: 15px;
     background: linear-gradient(-45deg, #a78bfa, #23a6d5, #23d5ab, #f0fdf4);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
+    /* Atļaujam skrullēt, lai nekas nepārklātos uz maza ekrāna */
+    overflow-y: auto; 
   }
 
   @keyframes gradientBG {
@@ -33,18 +35,15 @@
   }
 
   .container {
-    max-width: 1000px;
+    max-width: 950px;
     width: 100%;
     text-align: center;
-    /* Nodrošina, ka saturs neiziet ārpus ekrāna */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 20px 0;
   }
 
   header {
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.3);
+    margin-bottom: 25px;
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     padding: 10px 25px;
     border-radius: 50px;
@@ -53,17 +52,17 @@
   }
 
   h1 {
-    font-size: clamp(16px, 3vw, 22px);
+    font-size: 22px;
     font-weight: 800;
-    color: #334155; 
+    color: white;
     margin: 0;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 15px;
-    width: 100%;
+    gap: 20px;
+    margin-bottom: 30px;
   }
 
   .card {
@@ -72,43 +71,37 @@
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px;
     text-align: left;
-    transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
-    height: auto; /* Atļauj augstumam pielāgoties saturam */
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.4);
-    border-color: white;
+    justify-content: space-between;
+    min-height: 200px;
   }
 
   .icon {
-    font-size: 24px;
-    margin-bottom: 12px;
+    font-size: 28px;
+    margin-bottom: 15px;
     background: white;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 12px;
   }
 
   h2 {
-    font-size: 16px;
-    color: #1e293b;
-    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: white;
+    margin: 0 0 10px 0;
   }
 
   p {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
-    color: #475569;
-    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 20px;
   }
 
   .btn {
@@ -117,30 +110,27 @@
     justify-content: center;
     background: white;
     color: var(--accent-purple);
-    padding: 10px 18px;
+    padding: 12px 24px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 12px;
-    margin-top: auto; /* Pogu vienmēr noliek apakšā */
-    border: 1px solid rgba(124, 92, 191, 0.2);
+    font-size: 13px;
+    transition: transform 0.2s;
+    margin-top: auto;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
   }
 
   footer {
-    margin-top: 30px;
-    font-size: 12px;
-    color: #334155;
-    background: rgba(255, 255, 255, 0.4);
-    padding: 10px 20px;
-    border-radius: 30px;
+    font-size: 13px;
+    color: white;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px 30px;
+    border-radius: 40px;
     display: inline-block;
-    border: 1px solid var(--glass-border);
-    z-index: 10; /* Lai footer būtu pa virsu fonam, bet ne tekstam */
-  }
-
-  @media (max-width: 600px) {
-    .grid { grid-template-columns: 1fr; }
-    body { height: auto; overflow-y: auto; }
+    border: 1px solid rgba(255,255,255,0.1);
   }
 </style>
 </head>
@@ -153,23 +143,29 @@
 
   <div class="grid">
     <div class="card">
-      <div class="icon">📈</div>
-      <h2>Nordtech Analytics</h2>
-      <p>Interaktīvs biznesa datu panelis (Python/Streamlit). 1. moduļa noslēguma darbs.</p>
-      <a href="https://nordtech-analytics-dashboard-nkmnwmcp9ofocy4ukg3n6a.streamlit.app/" target="_blank" class="btn">Atvērt Streamlit</a>
+      <div>
+        <div class="icon">📈</div>
+        <h2>Nordtech Analytics</h2>
+        <p>Interaktīvs biznesa datu panelis (Python/Streamlit). 1. moduļa noslēguma darbs BDA-MI skolā.</p>
+      </div>
+      <a href="https://nordtech-analytics-dashboard-nkmnwmcp9ofocy4ukg3n6a.streamlit.app/" target="_blank" class="btn">Atvērt projektu</a>
     </div>
 
     <div class="card">
-      <div class="icon">🤗</div>
-      <h2>Hugging Face Hub</h2>
-      <p>Datu modeļu krātuve un analītikas eksperimenti.</p>
+      <div>
+        <div class="icon">🤗</div>
+        <h2>Hugging Face Hub</h2>
+        <p>Datu modeļu krātuve un ML eksperimenti. Šeit pētu jaunākās mašīnmācīšanās metodes.</p>
+      </div>
       <a href="https://huggingface.co/spaces/Meitene/nvd-f17-analitika" target="_blank" class="btn">Skatīt modeļus</a>
     </div>
 
     <div class="card">
-      <div class="icon">📊</div>
-      <h2>NVD Analītikas Dashboard</h2>
-      <p>Vienkāršots HTML rīks ar filtrēšanu un datu eksportu uz Excel.</p>
+      <div>
+        <div class="icon">📊</div>
+        <h2>NVD Analītikas Dashboard</h2>
+        <p>Interaktīva datu analīzes lapa ar filtrēšanu un ērtu datu eksportu uz Excel.</p>
+      </div>
       <a href="nvd_f17_analitika.html" target="_blank" class="btn">Atvērt Dashboard</a>
     </div>
   </div>
