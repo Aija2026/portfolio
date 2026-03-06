@@ -17,13 +17,13 @@
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
     display: flex;
+    flex-direction: column; /* Mainīts uz column, lai footer būtu apakšā */
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
     background: linear-gradient(-45deg, #a78bfa, #23a6d5, #23d5ab, #f0fdf4);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
-    overflow-x: hidden;
   }
 
   @keyframes gradientBG {
@@ -33,18 +33,20 @@
   }
 
   .container {
-    max-width: 1100px;
+    max-width: 1000px;
     width: 100%;
     text-align: center;
-    position: relative;
-    z-index: 1;
+    /* Nodrošina, ka saturs neiziet ārpus ekrāna */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px);
-    padding: 12px 30px;
+    padding: 10px 25px;
     border-radius: 50px;
     border: 1px solid var(--glass-border);
     display: inline-block;
@@ -60,7 +62,8 @@
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    gap: 15px;
+    width: 100%;
   }
 
   .card {
@@ -68,13 +71,13 @@
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    padding: 25px;
+    border-radius: 20px;
+    padding: 20px;
     text-align: left;
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto; /* Atļauj augstumam pielāgoties saturam */
   }
 
   .card:hover {
@@ -85,30 +88,27 @@
 
   .icon {
     font-size: 24px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     background: white;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-radius: 10px;
   }
 
   h2 {
     font-size: 16px;
     color: #1e293b;
-    margin: 0 0 10px 0;
-    line-height: 1.3;
+    margin: 0 0 8px 0;
   }
 
   p {
     font-size: 12px;
     line-height: 1.5;
     color: #475569;
-    margin-bottom: 20px;
-    flex-grow: 1;
+    margin-bottom: 15px;
   }
 
   .btn {
@@ -122,27 +122,25 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 12px;
-    transition: all 0.3s ease;
+    margin-top: auto; /* Pogu vienmēr noliek apakšā */
     border: 1px solid rgba(124, 92, 191, 0.2);
-  }
-
-  .btn:hover {
-    background: var(--accent-purple);
-    color: white;
   }
 
   footer {
     margin-top: 30px;
-    font-size: 11px;
-    color: #64748b;
+    font-size: 12px;
+    color: #334155;
     background: rgba(255, 255, 255, 0.4);
-    padding: 8px 20px;
+    padding: 10px 20px;
     border-radius: 30px;
     display: inline-block;
+    border: 1px solid var(--glass-border);
+    z-index: 10; /* Lai footer būtu pa virsu fonam, bet ne tekstam */
   }
 
   @media (max-width: 600px) {
     .grid { grid-template-columns: 1fr; }
+    body { height: auto; overflow-y: auto; }
   }
 </style>
 </head>
@@ -157,21 +155,21 @@
     <div class="card">
       <div class="icon">📈</div>
       <h2>Nordtech Analytics</h2>
-      <p>Interaktīvs biznesa datu panelis (Python/Streamlit). 1. moduļa noslēguma darbs BDA-MI skolā.</p>
+      <p>Interaktīvs biznesa datu panelis (Python/Streamlit). 1. moduļa noslēguma darbs.</p>
       <a href="https://nordtech-analytics-dashboard-nkmnwmcp9ofocy4ukg3n6a.streamlit.app/" target="_blank" class="btn">Atvērt Streamlit</a>
     </div>
 
     <div class="card">
       <div class="icon">🤗</div>
       <h2>Hugging Face Hub</h2>
-      <p>Sarežģīti datu modeļi un ML eksperimenti speciālistiem. Datu zinātnes krātuve.</p>
+      <p>Datu modeļu krātuve un analītikas eksperimenti.</p>
       <a href="https://huggingface.co/spaces/Meitene/nvd-f17-analitika" target="_blank" class="btn">Skatīt modeļus</a>
     </div>
 
     <div class="card">
       <div class="icon">📊</div>
       <h2>NVD Analītikas Dashboard</h2>
-      <p>Ātra un vienkārša HTML lapa ar filtrēšanu un Excel eksportu. Lietotājam draudzīgs variants.</p>
+      <p>Vienkāršots HTML rīks ar filtrēšanu un datu eksportu uz Excel.</p>
       <a href="nvd_f17_analitika.html" target="_blank" class="btn">Atvērt Dashboard</a>
     </div>
   </div>
